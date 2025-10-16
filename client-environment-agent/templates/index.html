@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shunyata - Local Coding Contest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #codeEditor {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: "Monaco", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+            background: white;
+            color: #333;
+            overflow: auto;
+        }
+
+        #codeEditor:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-success:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .right-panel {
+            flex: 0.6;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        #outputConsole {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: "Monaco", "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .output-header button {
+            padding: 6px 12px;
+            font-size: 11px;
+            flex: none;
+            width: auto;
+            background: #667eea;
+            color: white;
+        }
+
+        #scoreboard {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .scoreboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .scoreboard-table thead {
+            background: #667eea;
+            color: white;
+            
+        }
+
+        .scoreboard-table th {
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .scoreboard-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .scoreboard-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-accepted {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .right-panel {
+                flex: 0.5;
+            }
+        }
+
+        .error-message {
+            color: #f56565;
+            font-weight: 600;
+        }
+
+        .success-message {
+            color: #38a169;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Shunyata - Local Coding Contest</h1>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Problem & Code Editor -->
+            <div class="left-panel">
+                <!-- Problem Selector -->
+                <div class="section">
+                    <label class="section-title">Select Problem</label>
+                    <select id="problemSelector">
+                        <option value="">Loading problems...</option>
+                    </select>
+                </div>
+
+                <!-- Problem Statement (Optional Display) -->
+                <div class="section" id="problemDetails" style="display: none; max-height: 150px; overflow-y: auto;">
+                    <label class="section-title">Problem Statement</label>
+                    <div id="problemStatement" style="font-size: 13px; line-height: 1.6;"></div>
+                </div>
+
+                <!-- Code Editor -->
+                <div class="section" style="flex: 1; display: flex; flex-direction: column; padding: 0;">
+                    <label class="section-title" style="padding: 15px 15px 8px 15px;">Write Your Code</label>
+                    <textarea id="codeEditor" placeholder="// Write your code here...&#10;// Select a problem and click 'Run Locally' to test&#10;// Click 'Submit' when ready"></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="section" style="padding: 12px;">
+                    <div class="button-group">
+                        <button class="btn-primary" id="runButton" onclick="runLocal()">▶ Run Locally</button>
+                        <button class="btn-success" id="submitButton" onclick="submitCode()">✓ Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output & Scoreboard -->
+            <div class="right-panel">
+                <!-- Output Console -->
+                <div class="section" style="flex: 1; display: flex; flex-direction: column; padding: 0;">
+                    <div class="output-header" style="padding: 15px 15px 0 15px;">
+                        <label class="section-title" style="margin: 0;">Output & Results</label>
+                        <button onclick="clearOutput()" style="background: #667eea; color: white; padding: 4px 8px; font-size: 11px;">Clear</button>
+                    </div>
+                    <div id="outputConsole" placeholder="Results will appear here..."></div>
+                </div>
+
+                <!-- Live Scoreboard -->
+                <div class="section" style="display: flex; flex-direction: column;">
+                    <label class="section-title">Live Scoreboard</label>
+                    <div id="scoreboard" style="overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================================================================
+        // GLOBALS & CONFIG
+        // ====================================================================
+        const ENDPOINT_PROBLEMS = "/problems";
+        const ENDPOINT_RUN_LOCAL = "/run-local";
+        const ENDPOINT_SUBMIT = "/submit";
+        const ENDPOINT_SCOREBOARD = "/scoreboard";
+
+        let currentProblemId = null;
+        let problems = [];
+
+        // ====================================================================
+        // LOGGING
+        // ====================================================================
+        function log(message, type = "info") {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+        }
+
+        // ====================================================================
+        // OUTPUT CONSOLE MANAGEMENT
+        // ====================================================================
+        function appendOutput(text, type = "normal") {
+            const console = document.getElementById("outputConsole");
+            const line = `[${new Date().toLocaleTimeString()}] ${text}`;
+            
+            if (type === "error") {
+                console.innerHTML += `<span class="error-message">${line}</span>\n`;
+            } else if (type === "success") {
+                console.innerHTML += `<span class="success-message">${line}</span>\n`;
+            } else {
+                console.innerHTML += line + "\n";
+            }
+            
+            // Auto-scroll to bottom
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById("outputConsole").innerHTML = "";
+            log("Output cleared");
+        }
+
+        // ====================================================================
+        // PROBLEM LOADING
+        // ====================================================================
+        async function loadProblems() {
+            log("Fetching problems from server...");
+            appendOutput("Loading problems...");
+            
+            try {
+                const response = await fetch(ENDPOINT_PROBLEMS);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                problems = await response.json();
+                log(`Loaded ${problems.length} problem(s)`, "success");
+                appendOutput(`✓ Loaded ${problems.length} problem(s)`, "success");
+                
+                // Populate dropdown
+                const selector = document.getElementById("problemSelector");
+                selector.innerHTML = '<option value="">-- Select a problem --</option>';
+                
+                problems.forEach(p => {
+                    const option = document.createElement("option");
+                    option.value = p.id;
+                    option.textContent = p.title || p.id;
+                    selector.appendChild(option);
+                });
+                
+            } catch (error) {
+                const msg = `Error loading problems: ${error.message}`;
+                log(msg, "error");
+                appendOutput(msg, "error");
+                document.getElementById("problemSelector").innerHTML = '<option value="">Error loading problems</option>';
+            }
+        }
+
+        // ====================================================================
+        // PROBLEM SELECTION
+        // ====================================================================
+        document.getElementById("problemSelector").addEventListener("change", function(e) {
+            currentProblemId = e.target.value;
+            
+            if (currentProblemId) {
+                const problem = problems.find(p => p.id === currentProblemId);
+                if (problem) {
+                    log(`Selected problem: ${problem.title}`);
+                    appendOutput(`\n--- Problem: ${problem.title} ---\n${problem.statement || "No statement available"}\n`);
+                    
+                    // Display problem details
+                    const details = document.getElementById("problemDetails");
+                    document.getElementById("problemStatement").innerHTML = `<strong>${problem.title}</strong><br>${problem.statement || "No description"}`;
+                    details.style.display = "block";
+                }
+            } else {
+                document.getElementById("problemDetails").style.display = "none";
+                document.getElementById("codeEditor").value = "";
+                clearOutput();
+            }
+        });
+
+        // ====================================================================
+        // RUN LOCALLY
+        // ====================================================================
+        async function runLocal() {
+            if (!currentProblemId) {
+                appendOutput("Please select a problem first", "error");
+                return;
+            }
+            
+            const code = document.getElementById("codeEditor").value.trim();
+            if (!code) {
+                appendOutput("Please write some code first", "error");
+                return;
+            }
+            
+            const btn = document.getElementById("runButton");
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Running...';
+            
+            log(`Running local tests for problem: ${currentProblemId}`);
+            appendOutput(`\n--- Running Local Tests ---\n`);
+            
+            try {
+                const response = await fetch(ENDPOINT_RUN_LOCAL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        code: code,
+                        problem_id: currentProblemId
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const result = await response.json();
+                log(`Local test result: ${JSON.stringify(result)}`, "success");
+                
+                // Display results
+                if (result.error) {
+                    appendOutput(`Error: ${result.error}`, "error");
+                } else {
+                    const output = result.output || result.message || "Test completed";
+                    appendOutput(output, result.verdict === "Accepted" ? "success" : "normal");
+                    if (result.verdict) {
+                        appendOutput(`Verdict: ${result.verdict}`, "success");
+                    }
+                }
+                
+            } catch (error) {
+                const msg = `Error running local tests: ${error.message}`;
+                log(msg, "error");
+                appendOutput(msg, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "▶ Run Locally";
+            }
+        }
+
+        // ====================================================================
+        // SUBMIT CODE
+        // ====================================================================
+        async function submitCode() {
+            if (!currentProblemId) {
+                appendOutput("Please select a problem first", "error");
+                return;
+            }
+            
+            const code = document.getElementById("codeEditor").value.trim();
+            if (!code) {
+                appendOutput("Please write some code first", "error");
+                return;
+            }
+            
+            const btn = document.getElementById("submitButton");
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Submitting...';
+            
+            log(`Submitting code for problem: ${currentProblemId}`);
+            appendOutput(`\n--- Submitting to Server ---\n`);
+            
+            try {
+                const response = await fetch(ENDPOINT_SUBMIT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        code: code,
+                        problem_id: currentProblemId,
+                        participant_name: "Anonymous"
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const result = await response.json();
+                log(`Submission result: ${JSON.stringify(result)}`, "success");
+                
+                // Display verdict
+                if (result.error) {
+                    appendOutput(`Error: ${result.error}`, "error");
+                } else {
+                    appendOutput(`Verdict: ${result.verdict || "Submitted"}`, "success");
+                    if (result.message) {
+                        appendOutput(result.message);
+                    }
+                    if (result.score) {
+                        appendOutput(`Score: ${result.score}`, "success");
+                    }
+                }
+                
+                // Refresh scoreboard
+                refreshScoreboard();
+                
+            } catch (error) {
+                const msg = `Error submitting code: ${error.message}`;
+                log(msg, "error");
+                appendOutput(msg, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "✓ Submit";
+            }
+        }
+
+        // ====================================================================
+        // SCOREBOARD
+        // ====================================================================
+        async function refreshScoreboard() {
+            try {
+                const response = await fetch(ENDPOINT_SCOREBOARD);
+                if (!response.ok) return;
+                
+                const data = await response.json();
+                const scoreboard = document.getElementById("scoreboard");
+                
+                if (!data || data.length === 0) {
+                    scoreboard.innerHTML = "<p style='font-size: 12px; color: #999;'>No submissions yet</p>";
+                    return;
+                }
+                
+                let html = `<table class="scoreboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Participant</th>
+                            <th>Problems</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                data.forEach((entry, idx) => {
+                    html += `<tr>
+                        <td>${idx + 1}</td>
+                        <td>${entry.name || entry.participant_name || "Anonymous"}</td>
+                        <td><span class="status-badge status-accepted">${entry.problems_solved || 0}</span></td>
+                        <td><strong>${entry.score || 0}</strong></td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                scoreboard.innerHTML = html;
+                
+            } catch (error) {
+                log(`Scoreboard fetch error: ${error.message}`, "warn");
+            }
+        }
+
+        // ====================================================================
+        // INITIALIZATION
+        // ====================================================================
+        window.addEventListener("load", function() {
+            log("Page loaded, initializing Shunyata client...");
+            appendOutput("🚀 Shunyata Client Ready\n");
+            loadProblems();
+            refreshScoreboard();
+            setInterval(refreshScoreboard, 5000); // Refresh scoreboard every 5 seconds
+        });
+    </script>
+</body>
+</html>
