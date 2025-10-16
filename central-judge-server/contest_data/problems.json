@@ -1,0 +1,41 @@
+{
+  "P1": {
+    "title": "Product of Array Except Self",
+    "statement": "Given an integer array, return an array such that the output at index i is equal to the product of all the elements of the input array except the one at index i. Note: Please solve it without using the division operation.",
+    "time_limit": 1.0,
+    "memory_limit": 256,
+    "sample_test_cases": [
+      {
+        "input": "1 2 3 4",
+        "output": "24 12 8 6"
+      }
+    ]
+
+  },
+  "P2": {
+    "title": "Longest Palindromic Substring",
+    "statement": "Given a string s, return the longest palindromic substring in s.",
+    "time_limit": 1.0,
+    "memory_limit": 256,
+    "sample_test_cases": [
+      {
+        "input": "babad",
+        "output": "bab"
+      }
+    ]
+  
+  },
+  "P3": {
+    "title": "Climbing Stairs",
+    "statement": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    "time_limit": 1.0,
+    "memory_limit": 256,
+    "sample_test_cases": [
+      {
+        "input": "3",
+        "output": "3"
+      }
+    ]
+
+  }
+}

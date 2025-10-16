@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Scoreboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75em; text-align: left; border: 1px solid #ddd; }
+        th { background: #f2f2f2; }
+        .accepted { background-color: #d4edda; color: #155724; }
+        nav a { margin-right: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Problems</a>
+        <a href="/scoreboard">Scoreboard</a>
+    </nav>
+    <h1>Live Scoreboard</h1>
+    <table id="scoreboard-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Participant</th>
+                <th>Score</th>
+                <th>Problems Solved</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function fetchScoreboard() {
+            fetch('/api/scoreboard')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#scoreboard-table tbody');
+                    tbody.innerHTML = ''; 
+
+                    const sortedScores = Object.entries(data).sort(([, a], [, b]) => b.score - a.score);
+
+                    sortedScores.forEach(([participant, details], index) => {
+                        const row = document.createElement('tr');
+                        const solvedProblems = Object.keys(details.problems_solved).join(', ');
+                        
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${participant}</td>
+                            <td>${details.score}</td>
+                            <td class="${solvedProblems ? 'accepted' : ''}">${solvedProblems || 'None'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching scoreboard:', error));
+        }
+        fetchScoreboard();
+        setInterval(fetchScoreboard, 5000);
+    </script>
+</body>
+</html>

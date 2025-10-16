@@ -4,644 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shunyata :: Coding Contest Environment</title>
-    
-    <!-- CodeMirror for code editing -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    
     <style>
-        /* Modern CSS Reset */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* All CSS from original file is included here */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --font-mono: 'Fira Code', 'Monaco', 'Courier New', monospace;
-
-            /* Light Theme */
-            --bg-color: #f8fafc;
-            --panel-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --secondary-bg: #f1f5f9;
-            --secondary-hover: #e2e8f0;
-            --success-color: #16a34a;
-            --error-color: #dc2626;
-            --warning-color: #ea580c;
-            --info-color: #2563eb;
-            --editor-bg: #282a36;
+            --bg-color: #f8fafc; --panel-bg: #ffffff; --border-color: #e2e8f0; --text-primary: #0f172a; --text-secondary: #475569; --primary-color: #4f46e5; --primary-hover: #4338ca; --secondary-bg: #f1f5f9; --secondary-hover: #e2e8f0; --success-color: #16a34a; --error-color: #dc2626; --warning-color: #ea580c; --info-color: #2563eb; --editor-bg: #282a36;
         }
-
         html[data-theme='dark'] {
-            --bg-color: #020617;
-            --panel-bg: #0f172a;
-            --border-color: #1e293b;
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --primary-color: #6366f1;
-            --primary-hover: #818cf8;
-            --secondary-bg: #1e293b;
-            --secondary-hover: #334155;
-            --success-color: #22c55e;
-            --error-color: #f87171;
-            --warning-color: #fb923c;
-            --info-color: #60a5fa;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            padding: 1rem;
-            gap: 1rem;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1.25rem;
-            background-color: var(--panel-bg);
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .header-controls input {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            min-width: 200px;
-        }
-        .header-controls input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-            border-color: var(--primary-color);
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            background-color: var(--secondary-bg);
-            border-radius: 0.375rem;
-            font-size: 0.8rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--success-color);
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        #theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
-        #theme-toggle:hover {
-            background-color: var(--secondary-bg);
-        }
-
-        /* Main Layout */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-
-        .panel {
-            display: flex;
-            flex-direction: column;
-            background-color: var(--panel-bg);
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        /* Tabs */
-        .tabs-header {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 1rem;
-            gap: 1rem;
-            background-color: var(--secondary-bg);
-            transition: all 0.3s;
-        }
-        
-        .tab-button {
-            padding: 0.75rem 0.25rem;
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-        .tab-button:hover:not(.active) {
-            color: var(--text-primary);
-        }
-        
-        .tab-content {
-            display: none;
-            padding: 1rem;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-        .tab-content.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Problem Panel */
-        .problem-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        #problem-description h2 { 
-            font-size: 1.25rem; 
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-        
-        #problem-description p { 
-            font-size: 0.95rem; 
-            line-height: 1.7; 
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-        
-        #problem-description pre {
-            background-color: var(--secondary-bg);
-            padding: 1rem;
-            border-radius: 0.375rem;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            margin: 1rem 0;
-            border-left: 3px solid var(--primary-color);
-            overflow-x: auto;
-        }
-
-        .problem-meta {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .meta-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .meta-value {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Language Selector */
-        .language-selector {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background-color: var(--secondary-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .lang-option {
-            padding: 0.4rem 0.75rem;
-            border: 1px solid var(--border-color);
-            background-color: var(--panel-bg);
-            border-radius: 0.25rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .lang-option.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .lang-option:hover:not(.active) {
-            background-color: var(--secondary-hover);
-        }
-
-        /* Code Editor Panel */
-        .editor-panel {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        
-        .CodeMirror { 
-            flex-grow: 1; 
-            height: auto; 
-            font-size: 0.875rem;
-            font-family: var(--font-mono);
-        }
-        
-        .editor-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--secondary-bg);
-            transition: all 0.3s;
-        }
-
-        .editor-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        button {
-            padding: 0.6rem 1.25rem;
-            border: none;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        button:active:not(:disabled) { 
-            transform: scale(0.98); 
-        }
-        
-        .btn-secondary { 
-            background-color: var(--secondary-bg); 
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-        .btn-secondary:hover:not(:disabled) { 
-            background-color: var(--secondary-hover); 
-        }
-        
-        .btn-primary { 
-            background-color: var(--primary-color); 
-            color: white; 
-        }
-        .btn-primary:hover:not(:disabled) { 
-            background-color: var(--primary-hover); 
-        }
-
-        .btn-danger {
-            background-color: var(--error-color);
-            color: white;
-        }
-        .btn-danger:hover:not(:disabled) {
-            background-color: #b91c1c;
-        }
-        
-        button:disabled { 
-            opacity: 0.6; 
-            cursor: not-allowed; 
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            display: none;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background-color: var(--secondary-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .progress-container.active {
-            display: flex;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-        }
-
-        .progress-status {
-            color: var(--text-secondary);
-        }
-
-        .progress-percent {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background-color: var(--border-color);
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), #8b5cf6);
-            border-radius: 999px;
-            transition: width 0.3s ease;
-        }
-
-        /* Console */
-        #console-output {
-            background-color: var(--editor-bg);
-            color: #f8f8f2;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            white-space: pre-wrap;
-            word-break: break-word;
-            flex-grow: 1;
-            padding: 1rem;
-            border-radius: 0.375rem;
-            overflow-y: auto;
-        }
-        
-        .log-line { 
-            display: block; 
-            margin-bottom: 0.25rem;
-        }
-        .log-error { color: var(--error-color); }
-        .log-success { color: var(--success-color); }
-        .log-info { color: var(--info-color); }
-        .log-warning { color: var(--warning-color); }
-
-        .console-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background-color: var(--secondary-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .console-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .clear-console-btn {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        /* Scoreboard */
-        #scoreboard-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 0.875rem; 
-        }
-        
-        #scoreboard-table th, #scoreboard-table td { 
-            padding: 0.75rem; 
-            text-align: left; 
-            border-bottom: 1px solid var(--border-color); 
-        }
-        
-        #scoreboard-table th { 
-            font-weight: 600; 
-            background-color: var(--secondary-bg); 
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        #scoreboard-table tbody tr:hover {
-            background-color: var(--secondary-bg);
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background-color: rgba(22, 163, 74, 0.15);
-            color: var(--success-color);
-        }
-
-        .badge-error {
-            background-color: rgba(220, 38, 38, 0.15);
-            color: var(--error-color);
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 1rem; 
-            height: 1rem;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin { 
-            to { transform: rotate(360deg); } 
-        }
-
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            body { padding: 0.5rem; gap: 0.5rem; }
-            .main-content { grid-template-columns: 1fr; }
-            header h1 { font-size: 1.25rem; }
-            .header-controls input { min-width: 150px; }
-        }
+            --bg-color: #020617; --panel-bg: #0f172a; --border-color: #1e293b; --text-primary: #e2e8f0; --text-secondary: #94a3b8; --primary-color: #6366f1; --primary-hover: #818cf8; --secondary-bg: #1e293b; --secondary-hover: #334155; --success-color: #22c55e; --error-color: #f87171; --warning-color: #fb923c; --info-color: #60a5fa;
+        }
+        body { font-family: var(--font-sans); background-color: var(--bg-color); color: var(--text-primary); display: flex; flex-direction: column; height: 100vh; padding: 1rem; gap: 1rem; transition: background-color 0.3s, color 0.3s; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; background-color: var(--panel-bg); border-radius: 0.5rem; border: 1px solid var(--border-color); }
+        header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary-color), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header-controls { display: flex; align-items: center; gap: 1rem; }
+        .header-controls input { padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-primary); border-radius: 0.375rem; font-size: 0.875rem; min-width: 200px; }
+        .status-indicator { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background-color: var(--secondary-bg); border-radius: 0.375rem; font-size: 0.8rem; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--success-color); animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        #theme-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex-grow: 1; overflow: hidden; }
+        .panel { display: flex; flex-direction: column; background-color: var(--panel-bg); border-radius: 0.5rem; border: 1px solid var(--border-color); overflow: hidden; }
+        .tabs-header { display: flex; border-bottom: 1px solid var(--border-color); padding: 0 1rem; gap: 1rem; background-color: var(--secondary-bg); }
+        .tab-button { padding: 0.75rem 0.25rem; background: none; border: none; border-bottom: 2px solid transparent; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; }
+        .tab-button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; padding: 1rem; overflow-y: auto; flex-grow: 1; }
+        .tab-content.active { display: flex; flex-direction: column; }
+        #problem-description h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+        #problem-description p { line-height: 1.7; color: var(--text-secondary); margin-bottom: 1rem; }
+        #problem-description pre { background-color: var(--secondary-bg); padding: 1rem; border-radius: 0.375rem; font-family: var(--font-mono); font-size: 0.85rem; margin: 1rem 0; border-left: 3px solid var(--primary-color); }
+        .language-selector { display: flex; gap: 0.5rem; padding: 0.75rem 1rem; background-color: var(--secondary-bg); border-bottom: 1px solid var(--border-color); }
+        .lang-option { padding: 0.4rem 0.75rem; border: 1px solid var(--border-color); background-color: var(--panel-bg); border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer; }
+        .lang-option.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .editor-panel { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        .CodeMirror { flex-grow: 1; height: auto; font-size: 0.875rem; font-family: var(--font-mono); }
+        .editor-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border-color); background-color: var(--secondary-bg); }
+        button { padding: 0.6rem 1.25rem; border: none; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-secondary { background-color: var(--secondary-bg); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .progress-container { display: none; flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; background-color: var(--secondary-bg); border-bottom: 1px solid var(--border-color); }
+        .progress-container.active { display: flex; }
+        .progress-bar-bg { width: 100%; height: 6px; background-color: var(--border-color); border-radius: 999px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-color), #8b5cf6); border-radius: 999px; transition: width 0.3s ease; }
+        #console-output { background-color: var(--editor-bg); color: #f8f8f2; font-family: var(--font-mono); font-size: 0.8rem; white-space: pre-wrap; word-break: break-word; flex-grow: 1; padding: 1rem; border-radius: 0.375rem; overflow-y: auto; }
+        .log-line { display: block; margin-bottom: 0.25rem; }
+        .log-error { color: var(--error-color); } .log-success { color: var(--success-color); } .log-info { color: var(--info-color); } .log-warning { color: var(--warning-color); }
+        #scoreboard-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        #scoreboard-table th, #scoreboard-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .loading-spinner { width: 1rem; height: 1rem; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 900px) { body { padding: 0.5rem; } .main-content { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <header>
         <h1>⚡ Shunyata</h1>
         <div class="header-controls">
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span>Connected</span>
-            </div>
+            <div class="status-indicator"><span class="status-dot"></span><span>Connected</span></div>
             <input type="text" id="participantName" placeholder="Enter your name...">
-            <button id="theme-toggle" title="Toggle theme">
-                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-            </button>
+            <button id="theme-toggle" title="Toggle theme"><svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
         </div>
     </header>
 
     <div class="main-content">
-        <!-- LEFT PANEL: Problem Description -->
         <div class="panel">
             <div class="tabs-header">
-                <select id="problemSelector" style="width: 100%; padding: 0.5rem; border: none; background: transparent; font-weight: 500; color: var(--text-primary); cursor: pointer;">
-                    <option>Loading problems...</option>
-                </select>
+                <select id="problemSelector" style="width: 100%; padding: 0.5rem; border: none; background: transparent; font-weight: 500; color: var(--text-primary); cursor: pointer;"><option>Loading problems...</option></select>
             </div>
-            <div id="problem-description" class="tab-content active">
-                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                    <h2>Welcome to Shunyata</h2>
-                    <p style="margin-top: 1rem;">Select a problem from the dropdown above to begin coding.</p>
-                </div>
-            </div>
+            <div id="problem-description" class="tab-content active"><div style="text-align: center; padding: 2rem; color: var(--text-secondary);"><h2>Welcome to Shunyata</h2><p style="margin-top: 1rem;">Select a problem from the dropdown to begin.</p></div></div>
         </div>
-
-        <!-- RIGHT PANEL: Editor & Console -->
         <div class="panel editor-panel">
-            <div class="language-selector">
-                <span style="font-size: 0.8rem; color: var(--text-secondary); align-self: center;">Language:</span>
-                <div class="lang-option active" data-lang="cpp">C++</div>
-                <div class="lang-option" data-lang="python">Python</div>
-            </div>
-            
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-info">
-                    <span class="progress-status" id="progressStatus">Initializing...</span>
-                    <span class="progress-percent" id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
-                </div>
-            </div>
-
+            <div class="language-selector"><span style="font-size: 0.8rem; color: var(--text-secondary); align-self: center;">Language:</span><div class="lang-option active" data-lang="cpp">C++</div><div class="lang-option" data-lang="python">Python</div></div>
+            <div class="progress-container" id="progressContainer"><div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width: 0%"></div></div></div>
             <textarea id="codeEditor"></textarea>
-            
             <div class="editor-footer">
-                <div style="font-size: 0.75rem; color: var(--text-secondary);" id="editorStatus">
-                    Ready
-                </div>
-                <div class="editor-actions">
-                    <button id="runButton" class="btn-secondary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                        </svg>
-                        Run Local
-                    </button>
-                    <button id="submitButton" class="btn-primary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 2L11 13"></path>
-                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                        </svg>
-                        Submit
-                    </button>
-                </div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);" id="editorStatus">Ready</div>
+                <div class="editor-actions"><button id="runButton" class="btn-secondary"><svg width="14" height="14" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Run Local</button><button id="submitButton" class="btn-primary"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>Submit</button></div>
             </div>
-            
-            <div class="tabs-header">
-                <button class="tab-button active" data-tab="console">Console</button>
-                <button class="tab-button" data-tab="scoreboard">Scoreboard</button>
-            </div>
-            
-            <div id="console" class="tab-content active" style="display: flex; flex-direction: column; padding: 0;">
-                <div class="console-header">
-                    <span class="console-title">Output Console</span>
-                    <button class="clear-console-btn" id="clearConsole">Clear</button>
-                </div>
-                <div style="padding: 0; flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;">
-                    <div id="console-output"></div>
-                </div>
-            </div>
-            
+            <div class="tabs-header"><button class="tab-button active" data-tab="console">Console</button><button class="tab-button" data-tab="scoreboard">Scoreboard</button></div>
+            <div id="console" class="tab-content active" style="padding:0;"><div id="console-output"></div></div>
             <div id="scoreboard" class="tab-content">
-                <table id="scoreboard-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Participant</th>
-                            <th>Solved</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="4" style="text-align:center; color: var(--text-secondary); padding: 2rem;">Loading scoreboard...</td></tr>
-                    </tbody>
-                </table>
+                <table id="scoreboard-table"><thead><tr><th>Rank</th><th>Participant</th><th>Score</th><th>Solved</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;">Loading...</td></tr></tbody></table>
             </div>
         </div>
     </div>
@@ -649,145 +96,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    
     <script>
     (function() {
         'use strict';
-
-        // ====================================================================
-        // STATE MANAGEMENT
-        // ====================================================================
-        const state = {
-            problems: [],
-            currentProblemId: null,
-            participantName: 'Anonymous',
-            currentLanguage: 'cpp',
-            isRunning: false,
-            isSubmitting: false,
-            currentJobId: null,
-            pollInterval: null,
-        };
-
-        // ====================================================================
-        // DOM ELEMENTS
-        // ====================================================================
+        const state = { problems: [], currentProblemId: null, participantName: 'Anonymous', currentLanguage: 'cpp', isRunning: false, isSubmitting: false, currentJobId: null };
         const ui = {
-            problemSelector: document.getElementById('problemSelector'),
-            problemDescription: document.getElementById('problem-description'),
-            runButton: document.getElementById('runButton'),
-            submitButton: document.getElementById('submitButton'),
-            consoleOutput: document.getElementById('console-output'),
-            clearConsole: document.getElementById('clearConsole'),
-            scoreboardBody: document.querySelector('#scoreboard-table tbody'),
-            participantNameInput: document.getElementById('participantName'),
-            themeToggle: document.getElementById('theme-toggle'),
-            progressContainer: document.getElementById('progressContainer'),
-            progressStatus: document.getElementById('progressStatus'),
-            progressPercent: document.getElementById('progressPercent'),
-            progressBar: document.getElementById('progressBar'),
-            editorStatus: document.getElementById('editorStatus'),
-            langOptions: document.querySelectorAll('.lang-option'),
+            problemSelector: document.getElementById('problemSelector'), problemDescription: document.getElementById('problem-description'), runButton: document.getElementById('runButton'), submitButton: document.getElementById('submitButton'), consoleOutput: document.getElementById('console-output'), scoreboardBody: document.querySelector('#scoreboard-table tbody'), participantNameInput: document.getElementById('participantName'), themeToggle: document.getElementById('theme-toggle'), progressContainer: document.getElementById('progressContainer'), progressBar: document.getElementById('progressBar'), editorStatus: document.getElementById('editorStatus'), langOptions: document.querySelectorAll('.lang-option'),
         };
-
         let editor;
 
-        // ====================================================================
-        // INITIALIZATION
-        // ====================================================================
         function init() {
-            initTheme();
-            initCodeMirror();
-            initEventListeners();
-            logToConsole('🚀 Shunyata Client Environment Agent initialized', 'success');
-            logToConsole('Connecting to server...', 'info');
-            loadProblems();
-            startScoreboardLoop();
+            initTheme(); initCodeMirror(); initEventListeners();
+            logToConsole('🚀 Shunyata Client Initialized', 'success');
+            loadProblems(); startScoreboardLoop();
         }
 
         function initCodeMirror() {
-            editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
-                lineNumbers: true,
-                mode: "text/x-c++src",
-                theme: "dracula",
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                indentUnit: 4,
-                tabSize: 4,
-                lineWrapping: true,
-            });
+            editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), { lineNumbers: true, mode: "text/x-c++src", theme: "dracula", matchBrackets: true, autoCloseBrackets: true, indentUnit: 4 });
             editor.setSize(null, "100%");
-            editor.setValue("// Welcome to Shunyata!\n// Select a problem to get started.\n");
+            editor.setValue("// Select a problem to get started.\n");
         }
 
         function initEventListeners() {
             ui.problemSelector.addEventListener('change', handleProblemSelect);
             ui.runButton.addEventListener('click', runLocalCode);
             ui.submitButton.addEventListener('click', submitCode);
-            ui.clearConsole.addEventListener('click', () => {
-                ui.consoleOutput.innerHTML = '';
-                logToConsole('Console cleared', 'info');
-            });
-            
-            ui.participantNameInput.addEventListener('input', (e) => {
-                state.participantName = e.target.value.trim() || 'Anonymous';
-            });
-            
+            ui.participantNameInput.addEventListener('input', (e) => { state.participantName = e.target.value.trim() || 'Anonymous'; });
             ui.themeToggle.addEventListener('click', toggleTheme);
-            
-            // Tab switching
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.addEventListener('click', () => switchTab(btn));
-            });
-
-            // Language selector
-            ui.langOptions.forEach(opt => {
-                opt.addEventListener('click', () => switchLanguage(opt.dataset.lang));
-            });
+            document.querySelectorAll('.tab-button').forEach(btn => btn.addEventListener('click', () => switchTab(btn)));
+            ui.langOptions.forEach(opt => opt.addEventListener('click', () => switchLanguage(opt.dataset.lang)));
         }
 
         function switchTab(btn) {
             const targetTab = btn.dataset.tab;
-            document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+            btn.closest('.panel').querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            
-            const panel = btn.closest('.panel');
-            panel.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('active', content.id === targetTab);
-            });
-
-            if (targetTab === 'scoreboard') {
-                refreshScoreboard();
-            }
+            btn.closest('.panel').querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === targetTab));
+            if (targetTab === 'scoreboard') refreshScoreboard();
         }
 
         function switchLanguage(lang) {
             state.currentLanguage = lang;
-            
-            ui.langOptions.forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.lang === lang);
-            });
-
-            // Change CodeMirror mode
-            const mode = lang === 'python' ? 'text/x-python' : 'text/x-c++src';
-            editor.setOption('mode', mode);
-
-            // Update starter code
-            if (state.currentProblemId) {
-                const problem = state.problems.find(p => p.id === state.currentProblemId);
-                if (problem) {
-                    const starterCode = lang === 'python' 
-                        ? `# ${problem.title}\n# Python solution\n\n` 
-                        : `// ${problem.title}\n// C++ solution\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}\n`;
-                    editor.setValue(starterCode);
-                }
-            }
-
+            ui.langOptions.forEach(opt => opt.classList.toggle('active', opt.dataset.lang === lang));
+            editor.setOption('mode', lang === 'python' ? 'text/x-python' : 'text/x-c++src');
+            if (state.currentProblemId) handleProblemSelect({ target: { value: state.currentProblemId } }); // Refresh starter code
             logToConsole(`Switched to ${lang === 'python' ? 'Python' : 'C++'}`, 'info');
         }
 
-        // ====================================================================
-        // THEME MANAGEMENT
-        // ====================================================================
         function initTheme() {
             const savedTheme = localStorage.getItem('shunyata-theme') || 'light';
             setTheme(savedTheme, false);
@@ -796,48 +151,24 @@
         function setTheme(theme, save = true) {
             document.documentElement.setAttribute('data-theme', theme);
             if (save) localStorage.setItem('shunyata-theme', theme);
-            
-            const icon = ui.themeToggle.querySelector('#theme-icon');
-            if (theme === 'dark') {
-                icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-            } else {
-                icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
-            }
+            ui.themeToggle.querySelector('#theme-icon').innerHTML = theme === 'dark' ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>' : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
         }
 
         function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme');
-            const newTheme = current === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
+            setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
         }
 
-        // ====================================================================
-        // CONSOLE LOGGING
-        // ====================================================================
         function logToConsole(message, type = 'normal') {
             const line = document.createElement('span');
             line.className = `log-line log-${type}`;
             const timestamp = new Date().toLocaleTimeString();
-            const icon = {
-                success: '✓',
-                error: '✗',
-                warning: '⚠',
-                info: 'ℹ',
-                normal: '•'
-            }[type] || '•';
-            
-            line.textContent = `[${timestamp}] ${icon} ${message}`;
+            line.textContent = `[${timestamp}] ${message}`;
             ui.consoleOutput.appendChild(line);
             ui.consoleOutput.scrollTop = ui.consoleOutput.scrollHeight;
         }
 
-        // ====================================================================
-        // PROGRESS TRACKING
-        // ====================================================================
-        function showProgress(status, percent) {
+        function showProgress(percent) {
             ui.progressContainer.classList.add('active');
-            ui.progressStatus.textContent = status;
-            ui.progressPercent.textContent = `${percent}%`;
             ui.progressBar.style.width = `${percent}%`;
         }
 
@@ -845,16 +176,12 @@
             ui.progressContainer.classList.remove('active');
         }
 
-        // ====================================================================
-        // API CALLS
-        // ====================================================================
         async function loadProblems() {
             try {
                 const response = await fetch('/problems');
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                state.problems = await response.json();
-                
+                const problemData = await response.json();
+                state.problems = Object.entries(problemData).map(([id, details]) => ({ id, ...details }));
                 ui.problemSelector.innerHTML = '<option value="">-- Select a Problem --</option>';
                 state.problems.forEach(p => {
                     const option = document.createElement('option');
@@ -862,386 +189,161 @@
                     option.textContent = `${p.id}: ${p.title}`;
                     ui.problemSelector.appendChild(option);
                 });
-                
-                logToConsole(`Successfully loaded ${state.problems.length} problems`, 'success');
-                ui.editorStatus.textContent = `${state.problems.length} problems available`;
-                
+                logToConsole(`Loaded ${state.problems.length} problems`, 'success');
             } catch (error) {
                 logToConsole(`Failed to load problems: ${error.message}`, 'error');
-                ui.problemSelector.innerHTML = '<option value="">Error loading problems</option>';
                 ui.editorStatus.textContent = 'Connection error';
             }
         }
 
         function handleProblemSelect(e) {
             state.currentProblemId = e.target.value;
-            
             if (!state.currentProblemId) {
-                ui.problemDescription.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                        <h2>Welcome to Shunyata</h2>
-                        <p style="margin-top: 1rem;">Select a problem from the dropdown above to begin coding.</p>
-                    </div>`;
+                ui.problemDescription.innerHTML = `<div style="text-align: center; padding: 2rem;"><h2>Welcome</h2><p>Select a problem to begin.</p></div>`;
                 editor.setValue('');
                 return;
             }
-            
             const problem = state.problems.find(p => p.id === state.currentProblemId);
             if (!problem) return;
 
-            // Render problem description
-            let html = `
-                <div class="problem-header">
-                    <h2>${problem.title}</h2>
-                </div>
-                <p>${problem.statement || 'No description available.'}</p>
-            `;
-
-            // Add sample test cases
-            if (problem.sample_test_cases && problem.sample_test_cases.length > 0) {
-                html += '<h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1rem;">Sample Test Cases</h3>';
+            let html = `<h2>${problem.title}</h2><p>${problem.statement}</p>`;
+            if (problem.sample_test_cases) {
+                html += '<h3>Sample Cases</h3>';
                 problem.sample_test_cases.forEach((tc, i) => {
-                    html += `
-                        <pre><strong>Input ${i + 1}:</strong>
-${tc.input}
-
-<strong>Output ${i + 1}:</strong>
-${tc.output}</pre>`;
+                    html += `<pre><strong>Input ${i + 1}:</strong>\n${tc.input}\n\n<strong>Output ${i + 1}:</strong>\n${tc.output}</pre>`;
                 });
             }
-
-            // Add problem metadata
-            html += `
-                <div class="problem-meta">
-                    <div class="meta-item">
-                        <span class="meta-label">Time Limit</span>
-                        <span class="meta-value">${problem.time_limit || 2}s</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Memory Limit</span>
-                        <span class="meta-value">${problem.memory_limit || 256}MB</span>
-                    </div>
-                </div>
-            `;
-
             ui.problemDescription.innerHTML = html;
 
-            // Set starter code
-            const starterCode = state.currentLanguage === 'python'
-                ? `# ${problem.title}\n# Python solution\n\n`
-                : `// ${problem.title}\n// C++ solution\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    \n    return 0;\n}\n`;
-            
+            const starterCode = state.currentLanguage === 'python' ? `# ${problem.title}\n\n` : `// ${problem.title}\n#include <iostream>\n\nint main() {\n    // Your code here\n    return 0;\n}\n`;
             editor.setValue(starterCode);
             editor.focus();
-            
             logToConsole(`Loaded problem: ${problem.title}`, 'info');
-            ui.editorStatus.textContent = `Editing: ${problem.title}`;
         }
 
-        // ====================================================================
-        // LOCAL CODE EXECUTION (ASYNC)
-        // ====================================================================
         async function runLocalCode() {
-            if (state.isRunning || !state.currentProblemId) {
-                if (!state.currentProblemId) {
-                    logToConsole('Please select a problem first', 'warning');
-                }
-                return;
-            }
-
-            const code = editor.getValue().trim();
-            if (!code) {
-                logToConsole('Please write some code first', 'warning');
-                return;
-            }
-
-            const problem = state.problems.find(p => p.id === state.currentProblemId);
-            
+            if (state.isRunning || !state.currentProblemId) return;
             state.isRunning = true;
             ui.runButton.disabled = true;
             ui.runButton.innerHTML = '<span class="loading-spinner"></span> Running...';
-            
-            logToConsole(`\n${'='.repeat(60)}`, 'normal');
-            logToConsole(`Starting local execution for: ${problem.title}`, 'info');
-            logToConsole(`Language: ${state.currentLanguage.toUpperCase()}`, 'info');
+            logToConsole(`\n--- Running local test for ${state.currentProblemId} ---`, 'info');
 
             try {
-                // Start async execution
                 const response = await fetch('/run-async', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: code,
-                        problem_id: state.currentProblemId,
-                        language: state.currentLanguage
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: editor.getValue(), problem_id: state.currentProblemId, language: state.currentLanguage })
                 });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || `HTTP ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error(await response.text());
                 const { job_id } = await response.json();
                 state.currentJobId = job_id;
-                
-                logToConsole(`Job created: ${job_id}`, 'success');
-                showProgress('Queued...', 0);
-                
-                // Start polling for status
                 await pollJobStatus(job_id);
-
             } catch (error) {
                 logToConsole(`Execution failed: ${error.message}`, 'error');
-                hideProgress();
             } finally {
                 state.isRunning = false;
-                state.currentJobId = null;
                 ui.runButton.disabled = false;
-                ui.runButton.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                    Run Local`;
+                ui.runButton.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Run Local`;
+                hideProgress();
             }
         }
-
+        
         async function pollJobStatus(jobId) {
-            const maxAttempts = 60; // 60 seconds max
-            let attempts = 0;
-
             return new Promise((resolve, reject) => {
                 const poll = async () => {
-                    if (attempts++ >= maxAttempts) {
-                        reject(new Error('Execution timeout'));
-                        return;
-                    }
-
                     try {
                         const response = await fetch(`/job-status/${jobId}`);
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        
                         const data = await response.json();
-                        
-                        // Update progress
-                        const progress = data.progress || 0;
-                        const status = data.status || 'Processing';
-                        showProgress(status, progress);
-
-                        // Log status updates
-                        if (data.output && data.output !== state.lastOutput) {
-                            logToConsole(data.output, 'normal');
-                            state.lastOutput = data.output;
-                        }
-
-                        // Check if complete
-                        if (progress >= 100) {
-                            hideProgress();
+                        showProgress(data.progress || 0);
+                        if ((data.progress || 0) >= 100) {
                             displayExecutionResult(data);
-                            resolve(data);
+                            resolve();
                         } else {
-                            setTimeout(poll, 500); // Poll every 500ms
+                            setTimeout(poll, 500);
                         }
-
                     } catch (error) {
                         reject(error);
                     }
                 };
-
                 poll();
             });
         }
 
         function displayExecutionResult(data) {
-            logToConsole(`\n${'='.repeat(60)}`, 'normal');
-            
-            const status = data.status.toLowerCase();
-            
-            if (status === 'success') {
-                logToConsole('✓ Test Passed!', 'success');
-                logToConsole(`Output: ${data.output}`, 'normal');
-                logToConsole(`Expected: ${data.expected}`, 'normal');
-            } else if (status === 'wrong_answer') {
-                logToConsole('✗ Wrong Answer', 'error');
-                logToConsole(`Your Output: ${data.output}`, 'normal');
-                logToConsole(`Expected: ${data.expected}`, 'normal');
-            } else if (status === 'compilation_error') {
-                logToConsole('✗ Compilation Error', 'error');
-                logToConsole(data.output, 'error');
-            } else if (status === 'runtime_error') {
-                logToConsole('✗ Runtime Error', 'error');
-                logToConsole(data.output, 'error');
-            } else if (status === 'time_limit_exceeded') {
-                logToConsole('✗ Time Limit Exceeded', 'warning');
-                logToConsole(data.output, 'warning');
-            } else if (status === 'memory_limit_exceeded') {
-                logToConsole('✗ Memory Limit Exceeded', 'warning');
-                logToConsole(data.output, 'warning');
-            } else {
-                logToConsole(`Status: ${data.status}`, 'info');
-                if (data.output) logToConsole(data.output, 'normal');
-            }
-
-            if (data.execution_time) {
-                logToConsole(`Execution time: ${data.execution_time}`, 'info');
-            }
-            if (data.memory_usage) {
-                logToConsole(`Memory used: ${data.memory_usage}`, 'info');
-            }
-            
-            logToConsole(`${'='.repeat(60)}`, 'normal');
+            const status = (data.status || 'unknown').toLowerCase();
+            const type = status === 'success' ? 'success' : 'error';
+            logToConsole(`Local Verdict: ${data.status}`, type);
+            if (data.output) logToConsole(`Output:\n${data.output}`, 'normal');
+            if (status === 'wrong_answer' && data.expected) logToConsole(`Expected:\n${data.expected}`, 'normal');
+            if (data.execution_time) logToConsole(`Time: ${data.execution_time}, Memory: ${data.memory_usage}`, 'info');
+            logToConsole('--- End of local test ---', 'info');
         }
 
-        // ====================================================================
-        // CODE SUBMISSION
-        // ====================================================================
         async function submitCode() {
-            if (state.isSubmitting || !state.currentProblemId) {
-                if (!state.currentProblemId) {
-                    logToConsole('Please select a problem first', 'warning');
-                }
-                return;
-            }
-
-            const code = editor.getValue().trim();
-            if (!code) {
-                logToConsole('Please write some code first', 'warning');
-                return;
-            }
-
-            const problem = state.problems.find(p => p.id === state.currentProblemId);
-            
-            const confirmed = confirm(`Submit solution for "${problem.title}"?\n\nThis will be judged on all test cases.`);
-            if (!confirmed) return;
-
+            if (state.isSubmitting || !state.currentProblemId || !confirm(`Submit solution for "${state.currentProblemId}"?`)) return;
             state.isSubmitting = true;
             ui.submitButton.disabled = true;
             ui.submitButton.innerHTML = '<span class="loading-spinner"></span> Submitting...';
-            
-            logToConsole(`\n${'='.repeat(60)}`, 'normal');
-            logToConsole(`Submitting to judge: ${problem.title}`, 'info');
-            logToConsole(`Participant: ${state.participantName}`, 'info');
+            logToConsole(`\n--- Submitting to Judge for ${state.currentProblemId} ---`, 'info');
 
             try {
                 const response = await fetch('/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: code,
-                        problem_id: state.currentProblemId,
-                        participant_name: state.participantName,
-                        language: state.currentLanguage
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: editor.getValue(), problem_id: state.currentProblemId, participant_name: state.participantName, language: state.currentLanguage })
                 });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || `HTTP ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error((await response.json()).error || `HTTP ${response.status}`);
                 const result = await response.json();
                 displaySubmissionResult(result);
-                
-                // Refresh scoreboard after submission
-                setTimeout(() => refreshScoreboard(), 1000);
-
+                setTimeout(refreshScoreboard, 1000);
             } catch (error) {
                 logToConsole(`Submission failed: ${error.message}`, 'error');
             } finally {
                 state.isSubmitting = false;
                 ui.submitButton.disabled = false;
-                ui.submitButton.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 2L11 13"></path>
-                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                    </svg>
-                    Submit`;
+                ui.submitButton.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>Submit`;
             }
         }
 
         function displaySubmissionResult(result) {
-            logToConsole(`\n${'='.repeat(60)}`, 'normal');
-            
-            const verdict = result.verdict || result.status || 'Unknown';
+            const verdict = result.verdict || 'Unknown';
+            const details = result.details || 'No details.';
             const type = verdict === 'Accepted' ? 'success' : 'error';
-            
-            logToConsole(`Verdict: ${verdict}`, type);
-            
-            if (result.message) {
-                logToConsole(result.message, 'normal');
-            }
-            
-            if (result.passed_tests !== undefined && result.total_tests !== undefined) {
-                logToConsole(`Tests passed: ${result.passed_tests}/${result.total_tests}`, 'info');
-            }
-            
-            if (result.execution_time) {
-                logToConsole(`Time: ${result.execution_time}`, 'info');
-            }
-            
-            if (result.score !== undefined) {
-                logToConsole(`Score: ${result.score} points`, 'info');
-            }
-            
-            logToConsole(`${'='.repeat(60)}`, 'normal');
+            logToConsole(`Judge Verdict: ${verdict}`, type);
+            logToConsole(`Details: ${details}`, 'info');
+            logToConsole('--- End of submission ---', 'info');
         }
 
-        // ====================================================================
-        // SCOREBOARD
-        // ====================================================================
         async function refreshScoreboard() {
             try {
                 const response = await fetch('/scoreboard');
                 if (!response.ok) return;
-                
                 const data = await response.json();
-
-                if (!data || data.length === 0) {
-                    ui.scoreboardBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-secondary); padding: 2rem;">No submissions yet</td></tr>';
+                const sortedScores = Object.entries(data)
+                    .map(([name, details]) => ({
+                        participant_name: name,
+                        score: details.score,
+                        problems_solved: Object.keys(details.problems_solved).length
+                    }))
+                    .sort((a, b) => b.score - a.score);
+                
+                if (sortedScores.length === 0) {
+                    ui.scoreboardBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No submissions yet</td></tr>';
                     return;
                 }
-
-                // Sort by score descending
-                data.sort((a, b) => (b.score || 0) - (a.score || 0));
-
                 ui.scoreboardBody.innerHTML = '';
-                data.forEach((entry, index) => {
+                sortedScores.forEach((entry, index) => {
                     const row = ui.scoreboardBody.insertRow();
-                    
-                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                    
-                    row.innerHTML = `
-                        <td><strong>${medal} ${index + 1}</strong></td>
-                        <td>${escapeHtml(entry.participant_name || 'Anonymous')}</td>
-                        <td><span class="status-badge badge-success">${entry.problems_solved || 0}</span></td>
-                        <td><strong>${entry.score || 0}</strong> pts</td>
-                    `;
+                    row.innerHTML = `<td>${index + 1}</td><td>${entry.participant_name}</td><td>${entry.score}</td><td>${entry.problems_solved}</td>`;
                 });
-
-            } catch (error) {
-                console.warn('Scoreboard refresh failed:', error);
-            }
+            } catch (error) { console.warn('Scoreboard refresh failed:', error); }
         }
 
         function startScoreboardLoop() {
             refreshScoreboard();
-            setInterval(refreshScoreboard, 10000); // Refresh every 10 seconds
+            setInterval(refreshScoreboard, 10000);
         }
 
-        // ====================================================================
-        // UTILITY FUNCTIONS
-        // ====================================================================
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // ====================================================================
-        // START APPLICATION
-        // ====================================================================
         init();
-
     })();
     </script>
 </body>

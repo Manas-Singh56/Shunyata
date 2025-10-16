@@ -1,0 +1,68 @@
+# ## General
+# Ignore Operating System generated files
+.DS_Store
+Thumbs.db
+._*
+
+# Ignore log files
+*.log
+npm-debug.log*
+yarn-error.log
+
+# Ignore environment variables files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore IDE and editor directories
+.idea/
+.vscode/
+*.swp
+
+# ---
+
+# ## Node.js
+# Ignore Node modules and package manager lock files
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore build output
+dist/
+build/
+.next/
+
+# ---
+
+# ## Python
+# Ignore Python caches and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment folders
+venv/
+env/
+.venv/
+ENV/
+
+# Ignore Python packaging and distribution artifacts
+*.egg-info/
+*.egg
+/dist/
+/build/
+
+# ---
+
+# ## Project-Specific (Shunyata Contest)
+# Ignore dynamically generated submission and execution folders
+/submissions/
+/temp_exec/
+
+# Ignore the live scoreboard data file
+# This prevents contest state from being committed to version control.
+/central-judge-server/contest_data/scoreboard.json

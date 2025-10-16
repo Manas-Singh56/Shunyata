@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shunyata Contest - Problems</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        h1, h2 { color: #333; }
+        a { color: #007bff; text-decoration: none; }
+        .problem-list { list-style: none; padding: 0; }
+        .problem-list li { margin: 1em 0; padding: 1em; border: 1px solid #ccc; border-radius: 5px; }
+        nav a { margin-right: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Problems</a>
+        <a href="/scoreboard">Scoreboard</a>
+    </nav>
+    <h1>Contest Problems</h1>
+    <ul class="problem-list">
+        {% for pid, p in problems.items() %}
+        <li>
+            <h2><a href="/problem/{{ pid }}">{{ pid }}: {{ p.title }}</a></h2>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ problem.title }}</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        h1, h2 { color: #333; }
+        pre { background: #f4f4f4; padding: 1em; border: 1px solid #ddd; }
+        .container { display: flex; gap: 2em; }
+        .problem-details { flex: 1; }
+        .submission-form { flex: 1; }
+        nav a { margin-right: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Problems</a>
+        <a href="/scoreboard">Scoreboard</a>
+    </nav>
+    <h1>{{ problem_id }}: {{ problem.title }}</h1>
+    
+    <div class="container">
+        <div class="problem-details">
+            <h2>Problem Statement</h2>
+            <p>{{ problem.statement | safe }}</p>
+
+            <h2>Sample Test Cases</h2>
+            {% for case in problem.sample_test_cases %}
+            <h3>Sample {{ loop.index }}</h3>
+            <strong>Input:</strong>
+            <pre>{{ case.input }}</pre>
+            <strong>Output:</strong>
+            <pre>{{ case.output }}</pre>
+            {% endfor %}
+        </div>
+        <div class="submission-form">
+            <h2>Submit Solution (Web)</h2>
+            <p>You can also submit via your local Client Environment Agent (CEA).</p>
+            <p><strong>Web form submission is currently disabled. Please use the CEA client.</strong></p>
+        </div>
+    </div>
+</body>
+</html>
