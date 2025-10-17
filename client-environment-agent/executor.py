@@ -1,11 +1,12 @@
 """
-executor.py - Asynchronous Local Code Execution Engine for Shunyata
+executor.py - Asynchronous Local Code Execution Engine for Shunyata (Corrected)
 """
 import json
 import subprocess
 import time
 import shutil
 from pathlib import Path
+import requests # <-- Add this import
 
 try:
     import psutil
@@ -28,6 +29,23 @@ except ImportError:
 DEFAULT_TIME_LIMIT_S = 3
 DEFAULT_MEMORY_LIMIT_MB = 256
 
+# --- MODIFICATION START ---
+# This function now fetches problem data via an HTTP request to the local CEA
+def load_problem_data(problem_id: str) -> dict:
+    """Fetches all problems from the local CEA and returns data for the specific problem_id."""
+    # The CEA runs on localhost port 8000 by default
+    cea_problems_url = "http://127.0.0.1:8000/problems"
+    try:
+        response = requests.get(cea_problems_url, timeout=5)
+        response.raise_for_status()
+        all_problems = response.json()
+        return all_problems.get(problem_id)
+    except requests.exceptions.RequestException as e:
+        print(f"[Executor Error] Could not fetch problem data from CEA: {e}")
+        return None
+# --- MODIFICATION END ---
+
+
 def run_code_and_update_status(job_id, source_code, problem_id, language, status_store):
     def update_status(status, output="", progress=0, **kwargs):
         status_store[job_id].update({"status": status, "output": output, "progress": progress, **kwargs})
@@ -37,13 +55,18 @@ def run_code_and_update_status(job_id, source_code, problem_id, language, status
     
     try:
         update_status("Loading Problem", progress=10)
+        # Use the new, corrected function
         problem_data = load_problem_data(problem_id)
         if not problem_data:
-            update_status("Error", f"Problem {problem_id} not found.", 100)
+            update_status("Error", f"Problem '{problem_id}' not found or CEA is unreachable.", 100)
             return
         
         time_limit = problem_data.get("time_limit", DEFAULT_TIME_LIMIT_S)
         mem_limit = problem_data.get("memory_limit", DEFAULT_MEMORY_LIMIT_MB)
+        
+        if not problem_data.get("sample_test_cases"):
+             update_status("Error", f"No sample test cases found for problem '{problem_id}'.", 100)
+             return
         sample_case = problem_data["sample_test_cases"][0]
         
         if language.lower() == "cpp":
@@ -60,12 +83,6 @@ def run_code_and_update_status(job_id, source_code, problem_id, language, status
     finally:
         shutil.rmtree(exec_folder, ignore_errors=True)
 
-def load_problem_data(problem_id: str) -> dict:
-    problems_path = Path(__file__).parent.parent / "central-judge-server/contest_data/problems.json"
-    if not problems_path.exists(): return None
-    with open(problems_path, 'r') as f:
-        problems = json.load(f)
-        return problems.get(problem_id)
 
 def execute_cpp(source_code, test_case, exec_folder, time_limit, mem_limit, update_status):
     update_status("Compiling", progress=30)
@@ -106,16 +123,20 @@ def _run_and_verify(command, test_case, exec_folder, time_limit, mem_limit_mb):
                     process.kill()
                     raise subprocess.TimeoutExpired(command, time_limit)
                 if p:
-                    mem_info = p.memory_info().rss
-                    max_memory = max(max_memory, mem_info)
-                    if mem_info > mem_limit_mb * 1024 * 1024:
-                        process.kill()
-                        result["status"] = "memory_limit_exceeded"
-                        break
+                    try:
+                        mem_info = p.memory_info().rss
+                        max_memory = max(max_memory, mem_info)
+                        if mem_info > mem_limit_mb * 1024 * 1024:
+                            process.kill()
+                            result["status"] = "memory_limit_exceeded"
+                            break
+                    except psutil.NoSuchProcess:
+                        break # Process finished between checks
                 time.sleep(0.01)
 
             stdout, stderr = process.communicate()
-            result["memory_usage"] = f"{max_memory / 1024 / 1024:.2f} MB"
+            if PSUTIL_AVAILABLE:
+                result["memory_usage"] = f"{max_memory / 1024 / 1024:.2f} MB"
 
             if result["status"] != "memory_limit_exceeded":
                 if process.returncode != 0:

@@ -1,10 +1,51 @@
 {
-    "ddw": {
+    "dsddsad": {
+        "score": 0,
+        "problems_solved": {
+            "P1": {
+                "verdict": "Runtime Error",
+                "details": "Failed on test case #1. Traceback (most recent call last):\n  File \"c:\\Users\\skyie\\OneDrive\\Desktop\\Shunyata\\central-judge-server\\submissions\\dsddsad_P1_1760669134179\\main.py\", line 1, in <module>\n    sdasdsad\nNameError: name 'sdasdsad' is not defined\n",
+                "timestamp": 1760669134.214845,
+                "code": "sdasdsad"
+            }
+        }
+    },
+    "Anonymous": {
         "score": 100,
         "problems_solved": {
             "P1": {
                 "verdict": "Accepted",
-                "timestamp": 1760642314.0102437
+                "details": "",
+                "timestamp": 1760670020.8402843,
+                "code": "# Product of Array Except Self\n# Product of Array Except Self\ndef product_except_self(nums):\n    \"\"\"\n    Calculates the product of all elements in an array except the one at the current index.\n\n    Args:\n        nums: A list of integers.\n\n    Returns:\n        A new list where each element is the product of all other elements.\n    \"\"\"\n    n = len(nums)\n    if n == 0:\n        return []\n\n    # Initialize the result array with 1s\n    result = [1] * n\n\n    # --- First pass: Left to Right ---\n    # Calculate the product of all elements to the left of each index\n    prefix_product = 1\n    for i in range(n):\n        result[i] = prefix_product\n        prefix_product *= nums[i]\n\n    # --- Second pass: Right to Left ---\n    # Multiply by the product of all elements to the right of each index\n    suffix_product = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= suffix_product\n        suffix_product *= nums[i]\n\n    return result\n\n# --- Example Usage ---\ninput_array = [1, 2, 3, 4]\noutput_array = product_except_self(input_array)\n# Assuming 'output_array' is your list of results, e.g., [24, 12, 8, 6]\n\n# The asterisk (*) unpacks the list, and print handles the spacing automatically.\nprint(*output_array)\n# Expected Output: [24, 12, 8, 6]\n"
+            },
+            "P3": {
+                "verdict": "Wrong Answer",
+                "details": "Failed on test case #1",
+                "timestamp": 1760676929.4624815,
+                "code": "# Climbing Stairs\nprint(\"hello\")\n"
+            }
+        }
+    },
+    "harshit": {
+        "score": 0,
+        "problems_solved": {
+            "P1": {
+                "verdict": "Plagiarism Detected",
+                "details": "\u26a0\ufe0f Plagiarism detected: harshit similar to Anonymous (99.92%)",
+                "timestamp": 1760670047.1606061,
+                "code": "# Product of Array Except Self\n\n# Product of Array Except Self\ndef product_except_self(nums):\n    \"\"\"\n    Calculates the product of all elements in an array except the one at the current index.\n\n    Args:\n        nums: A list of integers.\n\n    Returns:\n        A new list where each element is the product of all other elements.\n    \"\"\"\n    n = len(nums)\n    if n == 0:\n        return []\n\n    # Initialize the result array with 1s\n    result = [1] * n\n\n    # --- First pass: Left to Right ---\n    # Calculate the product of all elements to the left of each index\n    prefix_product = 1\n    for i in range(n):\n        result[i] = prefix_product\n        prefix_product *= nums[i]\n\n    # --- Second pass: Right to Left ---\n    # Multiply by the product of all elements to the right of each index\n    suffix_product = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= suffix_product\n        suffix_product *= nums[i]\n\n    return result\n\n# --- Example Usage ---\ninput_array = [1, 2, 3, 4]\noutput_array = product_except_self(input_array)\n# Assuming 'output_array' is your list of results, e.g., [24, 12, 8, 6]\n\n# The asterisk (*) unpacks the list, and print handles the spacing automatically.\nprint(*output_array)\n# Expected Output: [24, 12, 8, 6]"
+            }
+        }
+    },
+    "utpal": {
+        "score": 0,
+        "problems_solved": {
+            "P3": {
+                "verdict": "Plagiarism Detected",
+                "details": "\u26a0\ufe0f Plagiarism detected: utpal similar to Anonymous (100.00%)",
+                "timestamp": 1760676950.2958395,
+                "code": "# Climbing Stairs\nprint(\"hello\")\n"
             }
         }
     }
